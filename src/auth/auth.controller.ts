@@ -17,9 +17,7 @@ export class AuthController {
 
   @Post('login')
   login(@Body() loginDto: LoginDTO) {
-    console.log(loginDto);
-    // return this.authService.login();
-    throw new NotImplementedException();
+    return this.authService.login(loginDto);
   }
 
   @Post('register')
