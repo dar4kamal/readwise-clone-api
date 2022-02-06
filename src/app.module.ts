@@ -6,6 +6,7 @@ import { AppService } from './app.service';
 import { AppController } from './app.controller';
 
 import { UserModule } from './user/user.module';
+import { AuthModule } from './auth/auth.module';
 import { HighlightModule } from './highlight/highlight.module';
 
 import { User } from './user/user.entity';
@@ -24,6 +25,7 @@ import { Highlight } from './highlight/highlight.entity';
       database: process.env.POSTGRES_DATABASE,
       port: parseInt(process.env.POSTGRES_PORT),
     }),
+    AuthModule,
     HighlightModule,
     UserModule,
   ],
