@@ -22,9 +22,7 @@ export class AuthController {
 
   @Post('register')
   register(@Body() registerDto: RegisterDTO) {
-    console.log(registerDto);
-    // return this.authService.register();
-    throw new NotImplementedException();
+    return this.authService.register(registerDto);
   }
 
   @Post('credentials')
