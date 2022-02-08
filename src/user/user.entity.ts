@@ -1,10 +1,11 @@
-import { Highlight } from '../highlight/highlight.entity';
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+
+import { Highlight } from '../highlight/highlight.entity';
 
 @Entity()
 export class User {
   @PrimaryGeneratedColumn('uuid')
-  id: number;
+  id: string;
 
   @Column({ nullable: false, unique: true })
   email: string;
