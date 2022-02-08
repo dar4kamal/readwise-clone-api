@@ -6,7 +6,6 @@ import {
   UseGuards,
   Controller,
   BadRequestException,
-  NotImplementedException,
 } from '@nestjs/common';
 
 import { User } from './user.entity';
@@ -32,11 +31,9 @@ export class UserController {
     @GetUser() user: User,
     @Body() updateUserDTO: UpdateUserDTO,
   ): Promise<User> {
-    if (Object.keys(updateUserDTO))
+    if (Object.keys(updateUserDTO).length === 0)
       throw new BadRequestException('Empty Data Provided');
 
-    console.log({ user, updateUserDTO });
-    // return this.userService.updateUserDetails(user, updateUserDTO);
-    throw new NotImplementedException();
+    return this.userService.updateUserDetails(user, updateUserDTO);
   }
 }

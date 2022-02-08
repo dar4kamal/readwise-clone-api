@@ -9,6 +9,7 @@ import { User } from './user.entity';
 import errorWrapper from '../utilities/errorWrapper';
 import { UserSearchByType } from '../utilities/types';
 
+import saveUser from './userRepositoryUtils/saveUser';
 import searchableFindUser from './userRepositoryUtils/searchableFindUser';
 
 @EntityRepository(User)
@@ -27,12 +28,20 @@ export class UserRepository extends Repository<User> {
     return onlyCheck ? !!user : user;
   }
 
-  async saveOne(
-    userRepo: Repository<User>,
-    newUser: User,
-    responseMessage: string,
-  ) {
-    await userRepo.save(newUser);
-    return responseMessage;
+  async saveOne(user: User, responseMessage: string) {
+    return await errorWrapper<InternalServerErrorException>(saveUser, [
+      this,
+      user,
+      responseMessage,
+    ]);
+  }
+
+  checkMatchedDetails(user: User, userDetails: Partial<User>): boolean {
+    if (
+      (userDetails?.email && user.email !== userDetails?.email) ||
+      (userDetails?.name && user.name !== userDetails?.name)
+    )
+      return false;
+    return true;
   }
 }
