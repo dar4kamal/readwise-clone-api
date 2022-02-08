@@ -4,11 +4,11 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PassportModule } from '@nestjs/passport';
 
-import { User } from '../user/user.entity';
 import { JwtStrategy } from './jwt.strategy';
 
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
+import { UserRepository } from '../user/user.repository';
 
 const parseTimeAsDays = (days: number) => 60 * 60 * 24 * days;
 
@@ -20,7 +20,7 @@ const parseTimeAsDays = (days: number) => 60 * 60 * 24 * days;
       signOptions: { expiresIn: parseTimeAsDays(10) },
     }),
     PassportModule.register({ defaultStrategy: 'jwt' }),
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([UserRepository]),
   ],
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy],

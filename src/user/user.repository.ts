@@ -18,13 +18,14 @@ export class UserRepository extends Repository<User> {
     searchBy: UserSearchByType,
     searchValue: string,
     onlyCheck?: boolean,
+    fullObjectSelection?: boolean,
   ): Promise<boolean | User> {
     const user = await errorWrapper<InternalServerErrorException>(
       searchableFindUser,
-      [this, searchBy, searchValue],
+      [this, searchBy, searchValue, fullObjectSelection],
     );
 
-    if (!user) throw new NotFoundException('user not found');
+    if (!user && !onlyCheck) throw new NotFoundException('user not found');
     return onlyCheck ? !!user : user;
   }
 

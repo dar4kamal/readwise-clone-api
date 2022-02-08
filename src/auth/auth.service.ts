@@ -1,57 +1,33 @@
 import { JwtService } from '@nestjs/jwt';
-import { InjectRepository } from '@nestjs/typeorm';
-import {
-  Injectable,
-  BadRequestException,
-  InternalServerErrorException,
-} from '@nestjs/common';
-
-import { Repository } from 'typeorm';
+import { Injectable, BadRequestException } from '@nestjs/common';
 
 import { User } from '../user/user.entity';
 import { LoginDTO } from './dto/login.dto';
 import { RegisterDTO } from './dto/register.dto';
 import { UpdateCredentialsDto } from './dto/updateCredentials.dto';
 
-import errorWrapper from '../utilities/errorWrapper';
+import { UserRepository } from '../user/user.repository';
+
+import { UserSearchByType } from '../utilities/types';
+
 import { checkPassword, hashPassword } from '../utilities/password.utils';
 
 @Injectable()
 export class AuthService {
   constructor(
     private jwtService: JwtService,
-    @InjectRepository(User) private userRepo: Repository<User>,
+    private userRepository: UserRepository,
   ) {}
-
-  private async findOne(
-    userRepo: Repository<User>,
-    email: string,
-    onlyCheck?: boolean,
-  ) {
-    const user = await userRepo.findOne({ where: { email } });
-    return onlyCheck ? !!user : user;
-  }
-
-  private async saveOne(
-    userRepo: Repository<User>,
-    newUser: User,
-    responseMessage: string,
-  ) {
-    await userRepo.save(newUser);
-    return responseMessage;
-  }
-
-  async findUser(email: string, onlyCheck?: boolean): Promise<boolean | User> {
-    return await errorWrapper<InternalServerErrorException>(this.findOne, [
-      this.userRepo,
-      email,
-      onlyCheck,
-    ]);
-  }
 
   async login(loginDto: LoginDTO): Promise<string> {
     const { email, password } = loginDto;
-    const user = (await this.findUser(email)) as User;
+
+    const user = (await this.userRepository.findByAny(
+      UserSearchByType.email,
+      email,
+      false,
+      true,
+    )) as User;
 
     if (!user || !checkPassword(password, user.password))
       throw new BadRequestException('Invalid Credentials');
@@ -61,37 +37,43 @@ export class AuthService {
 
   async register(registerDto: RegisterDTO) {
     const { email, name, password } = registerDto;
-    const checkUserExists = await this.findUser(email, true);
+
+    const checkUserExists = await this.userRepository.findByAny(
+      UserSearchByType.email,
+      email,
+      true,
+    );
 
     if (checkUserExists) throw new BadRequestException('User already exists');
 
-    const newUser = this.userRepo.create({
+    const newUser = this.userRepository.create({
       email,
       name,
       password: hashPassword(password),
     });
 
-    return await errorWrapper<InternalServerErrorException>(this.saveOne, [
-      this.userRepo,
+    return await this.userRepository.saveOne(
       newUser,
       'You have been registered successfully',
-    ]);
+    );
   }
 
   async updatePassword(updateCredentialsDto: UpdateCredentialsDto, user: User) {
     const { oldPassword, newPassword } = updateCredentialsDto;
 
-    const currentUser = (await this.findUser(user.email)) as User;
-    if (!currentUser) throw new BadRequestException('User already exists');
+    const currentUser = (await this.userRepository.findByAny(
+      UserSearchByType.email,
+      user.email,
+    )) as User;
 
     if (!checkPassword(oldPassword, user.password))
       throw new BadRequestException('Invalid Credentials');
 
     currentUser.password = hashPassword(newPassword);
-    return await errorWrapper<InternalServerErrorException>(this.saveOne, [
-      this.userRepo,
+
+    return await this.userRepository.saveOne(
       currentUser,
       'Credentials have been updated successfully',
-    ]);
+    );
   }
 }
