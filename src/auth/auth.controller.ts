@@ -1,11 +1,17 @@
 import {
   Body,
   Post,
+  UseGuards,
   Controller,
-  NotImplementedException,
+  BadRequestException,
 } from '@nestjs/common';
 
+import { User } from '../user/user.entity';
+
 import { AuthService } from './auth.service';
+
+import { JwtAuthGuard } from './guards/auth.guard';
+import { GetUser } from '../utilities/get-user.decorator';
 
 import { LoginDTO } from './dto/login.dto';
 import { RegisterDTO } from './dto/register.dto';
@@ -26,9 +32,19 @@ export class AuthController {
   }
 
   @Post('credentials')
-  updatePassword(@Body() updateCredentialsDto: UpdateCredentialsDto) {
-    console.log(updateCredentialsDto);
-    // return this.authService.register();
-    throw new NotImplementedException();
+  @UseGuards(JwtAuthGuard)
+  updatePassword(
+    @Body() updateCredentialsDto: UpdateCredentialsDto,
+    @GetUser() user: User,
+  ) {
+    const { oldPassword, newPassword, confirmPassword } = updateCredentialsDto;
+    if (newPassword !== confirmPassword)
+      throw new BadRequestException('Invalid Credentials');
+
+    if (oldPassword === newPassword)
+      throw new BadRequestException(
+        'These Credentials have recently been used, Please try something else.',
+      );
+    return this.authService.updatePassword(updateCredentialsDto, user);
   }
 }

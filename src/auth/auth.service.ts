@@ -11,6 +11,7 @@ import { Repository } from 'typeorm';
 import { User } from '../user/user.entity';
 import { LoginDTO } from './dto/login.dto';
 import { RegisterDTO } from './dto/register.dto';
+import { UpdateCredentialsDto } from './dto/updateCredentials.dto';
 
 import errorWrapper from '../utilities/errorWrapper';
 import { checkPassword, hashPassword } from '../utilities/password.utils';
@@ -31,9 +32,13 @@ export class AuthService {
     return onlyCheck ? !!user : user;
   }
 
-  private async saveOne(userRepo: Repository<User>, newUser: User) {
+  private async saveOne(
+    userRepo: Repository<User>,
+    newUser: User,
+    responseMessage: string,
+  ) {
     await userRepo.save(newUser);
-    return 'You have been registered successfully';
+    return responseMessage;
   }
 
   async findUser(email: string, onlyCheck?: boolean): Promise<boolean | User> {
@@ -69,6 +74,24 @@ export class AuthService {
     return await errorWrapper<InternalServerErrorException>(this.saveOne, [
       this.userRepo,
       newUser,
+      'You have been registered successfully',
+    ]);
+  }
+
+  async updatePassword(updateCredentialsDto: UpdateCredentialsDto, user: User) {
+    const { oldPassword, newPassword } = updateCredentialsDto;
+
+    const currentUser = (await this.findUser(user.email)) as User;
+    if (!currentUser) throw new BadRequestException('User already exists');
+
+    if (!checkPassword(oldPassword, user.password))
+      throw new BadRequestException('Invalid Credentials');
+
+    currentUser.password = hashPassword(newPassword);
+    return await errorWrapper<InternalServerErrorException>(this.saveOne, [
+      this.userRepo,
+      currentUser,
+      'Credentials have been updated successfully',
     ]);
   }
 }
