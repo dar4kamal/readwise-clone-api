@@ -23,9 +23,7 @@ export class UserController {
 
   @Get(':id')
   getUserDetails(@Param('id') userId: string): Promise<User> {
-    console.log({ userId });
-    // return this.userService.getUserDetails(userId);
-    throw new NotImplementedException();
+    return this.userService.getUserDetails(userId);
   }
 
   @Patch()

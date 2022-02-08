@@ -3,3 +3,9 @@ export enum HighlightSrcType {
   Article,
   Quote,
 }
+
+export enum UserSearchByType {
+  id = 'id',
+  email = 'email',
+  name = 'name',
+}
