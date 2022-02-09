@@ -72,13 +72,11 @@ export class HighlightController {
 
   @Patch('fav/:highlightId')
   @UseGuards(JwtAuthGuard)
-  favouriteHighlight(
+  favoriteHighlight(
     @Param('highlightId') highlightId: string,
     @GetUser() user: User,
   ) {
-    console.log({ user, highlightId });
-    // return this.highlightService.favouriteHighlight(user, highlightId);
-    throw new NotImplementedException();
+    return this.highlightService.favoriteHighlight(highlightId, user);
   }
 
   @Patch('privacy/:highlightId')

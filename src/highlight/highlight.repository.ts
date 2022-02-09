@@ -1,4 +1,7 @@
-import { InternalServerErrorException } from '@nestjs/common';
+import {
+  NotFoundException,
+  InternalServerErrorException,
+} from '@nestjs/common';
 
 import { EntityRepository, Repository } from 'typeorm';
 
@@ -20,10 +23,12 @@ export class HighlightRepository extends Repository<Highlight> {
   }
 
   async findByOptions(options = {}, findOne?: boolean) {
-    return await errorWrapper<InternalServerErrorException>(findByOptions, [
-      this,
-      options,
-      findOne,
-    ]);
+    const foundHighlights = await errorWrapper<InternalServerErrorException>(
+      findByOptions,
+      [this, options, findOne],
+    );
+    if (findOne && !foundHighlights)
+      throw new NotFoundException('Highlight not found');
+    return foundHighlights;
   }
 }

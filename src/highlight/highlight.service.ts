@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { User } from '../user/user.entity';
 
@@ -49,7 +49,6 @@ export class HighlightService {
       },
       true,
     );
-    if (!currentHighlight) throw new NotFoundException('Highlight not found');
 
     Object.entries(updateHighlightDTO).forEach(([key, value]) => {
       currentHighlight[key] = value;
@@ -58,6 +57,24 @@ export class HighlightService {
     return await this.highlightRepository.saveOne(
       currentHighlight,
       'Your highlight has been updated successfully',
+    );
+  }
+
+  async favoriteHighlight(highlightId: string, user: User) {
+    const currentHighlight = await this.highlightRepository.findByOptions(
+      {
+        id: highlightId,
+        user: { id: user.id },
+      },
+      true,
+    );
+
+    currentHighlight.isFavorite = !currentHighlight.isFavorite;
+    return await this.highlightRepository.saveOne(
+      currentHighlight,
+      `Your highlight has been ${
+        currentHighlight.isFavorite ? 'favorited' : 'unfavorited'
+      } successfully`,
     );
   }
 }
