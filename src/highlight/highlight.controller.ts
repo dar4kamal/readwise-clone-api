@@ -7,6 +7,7 @@ import {
   Query,
   UseGuards,
   Controller,
+  BadRequestException,
   NotImplementedException,
 } from '@nestjs/common';
 
@@ -54,12 +55,19 @@ export class HighlightController {
   @Patch(':highlightId')
   @UseGuards(JwtAuthGuard)
   updateHighlightDetails(
+    @Param('highlightId') highlightId: string,
     @Body() updateHighlightDTO: UpdateHighlightDTO,
     @GetUser() user: User,
   ) {
-    console.log({ user, updateHighlightDTO });
-    // return this.highlightService.updateHighlightDetails(user, updateHighlightDTO);
-    throw new NotImplementedException();
+    console.log({ updateHighlightDTO });
+    if (Object.keys(updateHighlightDTO).length === 0)
+      throw new BadRequestException('Empty Data Provided');
+
+    return this.highlightService.updateHighlightDetails(
+      highlightId,
+      updateHighlightDTO,
+      user,
+    );
   }
 
   @Patch('fav/:highlightId')

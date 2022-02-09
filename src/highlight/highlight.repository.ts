@@ -19,10 +19,11 @@ export class HighlightRepository extends Repository<Highlight> {
     ]);
   }
 
-  async findByOptions(options = {}) {
+  async findByOptions(options = {}, findOne?: boolean) {
     return await errorWrapper<InternalServerErrorException>(findByOptions, [
       this,
       options,
+      findOne,
     ]);
   }
 }
