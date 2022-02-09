@@ -4,6 +4,7 @@ import {
   Body,
   Patch,
   Param,
+  Query,
   UseGuards,
   Controller,
   NotImplementedException,
@@ -30,10 +31,15 @@ export class HighlightController {
 
   @Get()
   @UseGuards(JwtAuthGuard)
-  getUserHighlights(@GetUser() user: User) {
-    console.log({ user });
-    // return this.highlightService.getUserHighlights(user);
-    throw new NotImplementedException();
+  getUserHighlights(
+    @GetUser() user: User,
+    @Query('isPrivate') isPrivate: boolean,
+    @Query('isFavorite') isFavorite: boolean,
+  ) {
+    return this.highlightService.getUserHighlights(user, {
+      isPrivate,
+      isFavorite,
+    });
   }
 
   @Post()

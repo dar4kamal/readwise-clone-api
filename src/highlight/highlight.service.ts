@@ -11,7 +11,7 @@ export class HighlightService {
   constructor(private highlightRepository: HighlightRepository) {}
 
   async getPublicOnes() {
-    return await this.highlightRepository.findPublicOnes();
+    return await this.highlightRepository.findByOptions({ isPrivate: false });
   }
 
   async addNewHighlight(addHighlightDTO: AddHighlightDTO, user: User) {
@@ -23,5 +23,16 @@ export class HighlightService {
       newHighlight,
       'Your highlight has been saved successfully',
     );
+  }
+
+  async getUserHighlights(
+    user: User,
+    options?: { isPrivate: boolean; isFavorite: boolean },
+  ) {
+    return await this.highlightRepository.findByOptions({
+      user: { id: user.id },
+      ...(options.isPrivate && { isPrivate: options.isPrivate }),
+      ...(options.isFavorite && { isFavorite: options.isFavorite }),
+    });
   }
 }

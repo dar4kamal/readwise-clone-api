@@ -6,8 +6,8 @@ import { Highlight } from './highlight.entity';
 
 import errorWrapper from '../utilities/errorWrapper';
 
-import findPublic from './highlightRepoUtils/findPublic';
 import saveHighlight from './highlightRepoUtils/saveHighlight';
+import findByOptions from './highlightRepoUtils/findByOptions';
 
 @EntityRepository(Highlight)
 export class HighlightRepository extends Repository<Highlight> {
@@ -19,7 +19,10 @@ export class HighlightRepository extends Repository<Highlight> {
     ]);
   }
 
-  async findPublicOnes() {
-    return await errorWrapper<InternalServerErrorException>(findPublic, [this]);
+  async findByOptions(options = {}) {
+    return await errorWrapper<InternalServerErrorException>(findByOptions, [
+      this,
+      options,
+    ]);
   }
 }

@@ -1,8 +1,8 @@
 import { HighlightRepository } from '../highlight.repository';
 
-export default async function (repository: HighlightRepository) {
+export default async function (repository: HighlightRepository, options = {}) {
   return await repository.find({
-    where: { isPrivate: false },
+    where: options,
     relations: ['user'],
   });
 }
