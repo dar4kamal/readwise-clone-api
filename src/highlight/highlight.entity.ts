@@ -3,6 +3,7 @@ import {
   Column,
   ManyToOne,
   CreateDateColumn,
+  UpdateDateColumn,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -14,7 +15,7 @@ import { HighlightSrcType } from '../utilities/types';
 @Entity()
 export class Highlight {
   @PrimaryGeneratedColumn('uuid')
-  id: number;
+  id: string;
 
   @Column({ nullable: false })
   src: string;
@@ -30,6 +31,9 @@ export class Highlight {
 
   @CreateDateColumn({ nullable: false })
   createdAt: Date;
+
+  @UpdateDateColumn({ nullable: false })
+  updatedAt: Date;
 
   @Column({ default: false, nullable: false })
   isFavorite: boolean;

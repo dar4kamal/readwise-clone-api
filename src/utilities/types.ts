@@ -1,7 +1,7 @@
 export enum HighlightSrcType {
-  Book,
-  Article,
-  Quote,
+  Book = 'Book',
+  Article = 'Article',
+  Quote = 'Quote',
 }
 
 export enum UserSearchByType {
