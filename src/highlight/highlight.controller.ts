@@ -25,9 +25,7 @@ export class HighlightController {
 
   @Get('all')
   getPublicOnes() {
-    console.log('Getting all public ones');
-    // return this.highlightService.getPublicOnes();
-    throw new NotImplementedException();
+    return this.highlightService.getPublicOnes();
   }
 
   @Get()
@@ -44,9 +42,7 @@ export class HighlightController {
     @Body() addHighlightDTO: AddHighlightDTO,
     @GetUser() user: User,
   ) {
-    console.log({ user, addHighlightDTO });
-    // return this.highlightService.addNewHighlight(user, addHighlightDTO);
-    throw new NotImplementedException();
+    return this.highlightService.addNewHighlight(addHighlightDTO, user);
   }
 
   @Patch(':highlightId')
