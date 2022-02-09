@@ -9,3 +9,8 @@ export enum UserSearchByType {
   email = 'email',
   name = 'name',
 }
+
+export enum HighlightChangableProperty {
+  isPrivate = 'isPrivate',
+  isFavorite = 'isFavorite',
+}

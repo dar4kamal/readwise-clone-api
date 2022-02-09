@@ -8,7 +8,6 @@ import {
   UseGuards,
   Controller,
   BadRequestException,
-  NotImplementedException,
 } from '@nestjs/common';
 
 import { User } from '../user/user.entity';
@@ -20,6 +19,8 @@ import UpdateHighlightDTO from './dto/updateHighlight.dto';
 
 import { JwtAuthGuard } from '../auth/guards/auth.guard';
 import { GetUser } from '../utilities/get-user.decorator';
+
+import { HighlightChangableProperty } from '../utilities/types';
 
 @Controller('highlights')
 export class HighlightController {
@@ -76,7 +77,11 @@ export class HighlightController {
     @Param('highlightId') highlightId: string,
     @GetUser() user: User,
   ) {
-    return this.highlightService.favoriteHighlight(highlightId, user);
+    return this.highlightService.changeHighlightPropertyState(
+      highlightId,
+      user,
+      HighlightChangableProperty.isFavorite,
+    );
   }
 
   @Patch('privacy/:highlightId')
@@ -85,8 +90,10 @@ export class HighlightController {
     @Param('highlightId') highlightId: string,
     @GetUser() user: User,
   ) {
-    console.log({ user, highlightId });
-    // return this.highlightService.changeHighlightPrivacy(user, highlightId);
-    throw new NotImplementedException();
+    return this.highlightService.changeHighlightPropertyState(
+      highlightId,
+      user,
+      HighlightChangableProperty.isPrivate,
+    );
   }
 }

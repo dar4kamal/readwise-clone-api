@@ -7,6 +7,8 @@ import UpdateHighlightDTO from './dto/updateHighlight.dto';
 
 import { HighlightRepository } from './highlight.repository';
 
+import { HighlightChangableProperty } from '../utilities/types';
+
 @Injectable()
 export class HighlightService {
   constructor(private highlightRepository: HighlightRepository) {}
@@ -60,7 +62,11 @@ export class HighlightService {
     );
   }
 
-  async favoriteHighlight(highlightId: string, user: User) {
+  async changeHighlightPropertyState(
+    highlightId: string,
+    user: User,
+    property: HighlightChangableProperty,
+  ) {
     const currentHighlight = await this.highlightRepository.findByOptions(
       {
         id: highlightId,
@@ -69,12 +75,26 @@ export class HighlightService {
       true,
     );
 
-    currentHighlight.isFavorite = !currentHighlight.isFavorite;
+    let responseMessage: string;
+    switch (property) {
+      case HighlightChangableProperty.isFavorite:
+        currentHighlight.isFavorite = !currentHighlight.isFavorite;
+        responseMessage = `Your highlight has been ${
+          currentHighlight.isFavorite ? 'favorited' : 'unfavorited'
+        } successfully`;
+        break;
+
+      case HighlightChangableProperty.isPrivate:
+        currentHighlight.isPrivate = !currentHighlight.isPrivate;
+        responseMessage = `Your highlight has been set ${
+          currentHighlight.isPrivate ? 'private' : 'public'
+        } successfully`;
+        break;
+    }
+
     return await this.highlightRepository.saveOne(
       currentHighlight,
-      `Your highlight has been ${
-        currentHighlight.isFavorite ? 'favorited' : 'unfavorited'
-      } successfully`,
+      responseMessage,
     );
   }
 }
