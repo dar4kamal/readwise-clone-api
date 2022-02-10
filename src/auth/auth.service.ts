@@ -64,9 +64,11 @@ export class AuthService {
     const currentUser = (await this.userRepository.findByAny(
       UserSearchByType.email,
       user.email,
+      false,
+      true,
     )) as User;
 
-    if (!checkPassword(oldPassword, user.password))
+    if (!checkPassword(oldPassword, currentUser.password))
       throw new BadRequestException('Invalid Credentials');
 
     currentUser.password = hashPassword(newPassword);
