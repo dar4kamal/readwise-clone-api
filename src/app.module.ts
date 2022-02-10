@@ -29,8 +29,8 @@ import { TransformInterceptor } from './utilities/transform.interceptor';
       port: parseInt(process.env.POSTGRES_PORT),
     }),
     AuthModule,
-    HighlightModule,
     UserModule,
+    HighlightModule,
   ],
   controllers: [AppController],
   providers: [
