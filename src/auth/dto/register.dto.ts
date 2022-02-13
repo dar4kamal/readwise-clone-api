@@ -3,7 +3,7 @@ import { IsString, IsNotEmpty, IsEmail } from 'class-validator';
 
 export class RegisterDTO {
   @IsNotEmpty({ message: 'email is required' })
-  @IsEmail({ message: 'email Must be a valid' })
+  @IsEmail({}, { message: 'email Must be a valid email address' })
   @ApiProperty({ required: true })
   email: string;
 
