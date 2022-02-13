@@ -8,6 +8,7 @@ import {
 } from '@nestjs/common';
 import {
   ApiTags,
+  ApiResponse,
   ApiOperation,
   ApiBasicAuth,
   ApiOkResponse,
@@ -26,9 +27,9 @@ import { UpdateCredentialsDto } from './dto/updateCredentials.dto';
 
 import generateDocsExample from '../utilities/docs-decorators/generateDocsExample';
 import NotFoundResponse from '../utilities/docs-decorators/notFoundResponse.decorator';
-import BadRequestResponse from '../utilities/docs-decorators/badRequestResponse.decorator';
 import UnauthorizedResponse from '../utilities/docs-decorators/unauthorizedResponse.decorator';
 import AlreadyExistsResponse from '../utilities/docs-decorators/alreadyExistsResponse.decorator';
+import InvalidCredentialsResponse from '../utilities/docs-decorators/invalidCredentialsResponse.decorator';
 import InternalServerErrorResponse from '../utilities/docs-decorators/internalServerErrorResponse.decorator';
 
 @Controller('auth')
@@ -42,8 +43,8 @@ export class AuthController {
     description: 'User has logged in & a new token has been generated',
     schema: generateDocsExample('Generated JWT Token', HttpStatus.CREATED),
   })
-  @UnauthorizedResponse()
   @NotFoundResponse('User')
+  @InvalidCredentialsResponse()
   @InternalServerErrorResponse()
   login(@Body() loginDto: LoginDTO) {
     return this.authService.login(loginDto);
@@ -75,13 +76,17 @@ export class AuthController {
     ),
     description: 'Credentials have been updated successfully',
   })
+  @ApiResponse({
+    schema: generateDocsExample(
+      'These Credentials have recently been used, Please try something else.',
+      HttpStatus.BAD_REQUEST,
+    ),
+    description: 'Unchanged credentials from previous ones',
+  })
   @UnauthorizedResponse()
   @NotFoundResponse('User')
+  @InvalidCredentialsResponse()
   @InternalServerErrorResponse()
-  @BadRequestResponse(
-    'These Credentials have recently been used, Please try something else.',
-    'Unchanged credentials from previous ones',
-  )
   updatePassword(
     @Body() updateCredentialsDto: UpdateCredentialsDto,
     @GetUser() user: User,

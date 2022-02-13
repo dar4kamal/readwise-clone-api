@@ -28,6 +28,7 @@ import generateDocsExample from '../utilities/docs-decorators/generateDocsExampl
 import NotFoundResponse from '../utilities/docs-decorators/notFoundResponse.decorator';
 import BadRequestResponse from '../utilities/docs-decorators/badRequestResponse.decorator';
 import UnauthorizedResponse from '../utilities/docs-decorators/unauthorizedResponse.decorator';
+import InvalidCredentialsResponse from '../utilities/docs-decorators/invalidCredentialsResponse.decorator';
 import InternalServerErrorResponse from '../utilities/docs-decorators/internalServerErrorResponse.decorator';
 
 @ApiTags('User')
@@ -75,6 +76,7 @@ export class UserController {
   )
   @UnauthorizedResponse()
   @NotFoundResponse('User')
+  @InvalidCredentialsResponse()
   @InternalServerErrorResponse()
   updateUserDetails(
     @GetUser() user: User,

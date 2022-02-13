@@ -3,12 +3,15 @@ import { applyDecorators, HttpStatus } from '@nestjs/common';
 
 import generateDocsErrorExample from './generateDocsErrorExample';
 
-const UnauthorizedResponse = () =>
+const InvalidCredentialsResponse = () =>
   applyDecorators(
     ApiUnauthorizedResponse({
-      description: 'unauthorized access',
-      schema: generateDocsErrorExample('Unauthorized', HttpStatus.UNAUTHORIZED),
+      description: 'user has used invalid credentials',
+      schema: generateDocsErrorExample(
+        'Invalid Credentials',
+        HttpStatus.BAD_REQUEST,
+      ),
     }),
   );
 
-export default UnauthorizedResponse;
+export default InvalidCredentialsResponse;
