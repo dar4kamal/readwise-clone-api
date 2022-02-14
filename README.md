@@ -19,7 +19,7 @@ Basic Features and Services was Inspired by the [ReadWise](https://readwise.io/)
 
 ## Documentation
 
-[Swagger Documentation ( not yet deployed )]()
+[Swagger Documentation](http://3.144.253.79:5000/api-docs/)
 
 ## Tech Stack
 
