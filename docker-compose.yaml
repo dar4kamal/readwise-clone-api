@@ -18,6 +18,7 @@ services:
       - webnet
     depends_on:
       - postgres
+    restart: always
   postgres:
     container_name: pg_db_cnter
     image: postgres
@@ -32,6 +33,7 @@ services:
       - 5432:5432
     volumes:
       - pgdata:/var/lib/postgresql/data
+    restart: always
 networks:
   webnet:
 volumes:
