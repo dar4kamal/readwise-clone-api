@@ -27,6 +27,12 @@ import { TransformInterceptor } from './utilities/transform.interceptor';
       password: process.env.POSTGRES_PASSWORD,
       database: process.env.POSTGRES_DATABASE,
       port: parseInt(process.env.POSTGRES_PORT),
+      ssl: true,
+      extra: {
+        ssl: {
+          rejectUnauthorized: false,
+        },
+      },
     }),
     AuthModule,
     UserModule,
